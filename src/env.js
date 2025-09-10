@@ -1,3 +1,4 @@
+// src/env.js
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
@@ -8,6 +9,9 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]),
+    OPENAI_API_KEY: z.string().min(1),
+    COOLHAND_API_KEY: z.string().min(1),
+    COOLHAND_ENVIRONMENT: z.enum(["local", "production"]).default("production"),
   },
 
   /**
@@ -25,6 +29,9 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    COOLHAND_API_KEY: process.env.COOLHAND_API_KEY,
+    COOLHAND_ENVIRONMENT: process.env.COOLHAND_ENVIRONMENT,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

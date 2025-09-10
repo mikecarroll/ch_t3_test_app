@@ -1,3 +1,4 @@
+// src/app/page.tsx
 import Link from "next/link";
 
 import { LatestPost } from "~/app/_components/post";
@@ -36,6 +37,15 @@ export default async function Home() {
               <div className="text-lg">
                 Learn more about Create T3 App, the libraries it uses, and how
                 to deploy it.
+              </div>
+            </Link>
+            <Link
+              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
+              href="/email"
+            >
+              <h3 className="text-2xl font-bold">Email Response Generator →</h3>
+              <div className="text-lg">
+                Generate AI-powered customer service email responses using LangChain and OpenAI.
               </div>
             </Link>
           </div>
