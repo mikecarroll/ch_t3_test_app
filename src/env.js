@@ -11,7 +11,7 @@ export const env = createEnv({
     NODE_ENV: z.enum(["development", "test", "production"]),
     OPENAI_API_KEY: z.string().min(1),
     COOLHAND_API_KEY: z.string().min(1),
-    COOLHAND_ENVIRONMENT: z.enum(["local", "production"]).default("production"),
+    COOLHAND_SILENT: z.string().optional(),
   },
 
   /**
@@ -31,7 +31,7 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     COOLHAND_API_KEY: process.env.COOLHAND_API_KEY,
-    COOLHAND_ENVIRONMENT: process.env.COOLHAND_ENVIRONMENT,
+    COOLHAND_SILENT: process.env.COOLHAND_SILENT,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

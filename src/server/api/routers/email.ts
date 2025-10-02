@@ -19,7 +19,7 @@ export const emailRouter = createTRPCRouter({
       const emailService = new EmailResponseService(
         env.OPENAI_API_KEY,
         env.COOLHAND_API_KEY,
-        env.COOLHAND_ENVIRONMENT as 'local' | 'production'
+        env.COOLHAND_SILENT === 'true'
       );
 
       const response = await emailService.generateEmailResponse(input);
@@ -32,7 +32,7 @@ export const emailRouter = createTRPCRouter({
       const emailService = new EmailResponseService(
         env.OPENAI_API_KEY,
         env.COOLHAND_API_KEY,
-        env.COOLHAND_ENVIRONMENT as 'local' | 'production'
+        env.COOLHAND_SILENT === 'true'
       );
 
       const exampleEmail = emailService.getExampleCustomerEmail();
@@ -43,7 +43,7 @@ export const emailRouter = createTRPCRouter({
   // Get the example customer email without generating a response
   getExampleEmail: publicProcedure
     .query(() => {
-      const emailService = new EmailResponseService('', '', 'production'); // No keys needed for this
+      const emailService = new EmailResponseService('', '', true); // No keys needed for this, silent mode
       return emailService.getExampleCustomerEmail();
     }),
 });

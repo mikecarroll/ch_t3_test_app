@@ -13,6 +13,7 @@ export interface EmailResponse {
   original: CustomerEmail;
   response: string;
   timestamp: Date;
+  feedbackResult?: any;
 }
 
 export class EmailResponseService {
@@ -23,13 +24,12 @@ export class EmailResponseService {
   constructor(
     openAIApiKey: string,
     coolhandApiKey: string,
-    environment: 'local' | 'production' = 'production'
+    silent: boolean = false
   ) {
     // Initialize Coolhand
     this.coolhand = new Coolhand({
-      environment,
       apiKey: coolhandApiKey,
-      silent: false
+      silent: silent
     });
 
     // Initialize OpenAI model
@@ -71,16 +71,43 @@ Response:`,
 
       // Generate response using the model
       const result = await this.model.invoke(formattedPrompt);
-      
+      const emailResponse = result.content as string;
+
+      // Send feedback to Coolhand with dummy values
+      let feedbackResult = null;
+      try {
+        feedbackResult = await this.sendFeedback(emailResponse);
+        console.log('✅ Feedback sent successfully:', feedbackResult);
+      } catch (feedbackError) {
+        console.error('❌ Failed to send feedback:', feedbackError);
+        // Don't throw here - we still want to return the email response even if feedback fails
+      }
+
       return {
         original: customerEmail,
-        response: result.content as string,
+        response: emailResponse,
         timestamp: new Date(),
+        feedbackResult,
       };
     } catch (error) {
       console.error('Error generating email response:', error);
       throw new Error(`Failed to generate email response: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
+  }
+
+  private async sendFeedback(originalOutput: string) {
+    // Create feedback with dummy values (except llm_request_log_id and llm_provider_unique_id which are omitted)
+    const feedback = {
+      like: true, // dummy value
+      explanation: "This is a test feedback from the email service",
+      revised_output: "This is a dummy revised output",
+      original_output: originalOutput,
+      client_unique_id: `email-service-${Date.now()}`
+    };
+
+    // Note: We're intentionally omitting llm_request_log_id and llm_provider_unique_id as requested
+    // The API will need to handle this case appropriately
+    return await this.coolhand.createFeedback(feedback as any);
   }
 
   // Example method to get hardcoded customer email for testing

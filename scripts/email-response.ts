@@ -7,7 +7,7 @@ dotenv.config();
 async function main() {
   const openAIApiKey = process.env.OPENAI_API_KEY;
   const coolhandApiKey = process.env.COOLHAND_API_KEY;
-  const coolhandEnvironment = (process.env.COOLHAND_ENVIRONMENT as 'local' | 'production') || 'production';
+  const silent = process.env.COOLHAND_SILENT === 'true' || false;
 
   if (!openAIApiKey) {
     console.error('❌ OPENAI_API_KEY is required');
@@ -20,14 +20,14 @@ async function main() {
   }
 
   console.log('🚀 Starting Email Response Generator...');
-  console.log(`📧 Using Coolhand environment: ${coolhandEnvironment}`);
+  console.log(`📧 Using Coolhand monitoring (silent: ${silent})`);
   console.log();
 
   try {
     const emailService = new EmailResponseService(
       openAIApiKey,
       coolhandApiKey,
-      coolhandEnvironment
+      silent
     );
 
     // Get the example customer email
@@ -53,6 +53,13 @@ async function main() {
     console.log('=' .repeat(50));
     console.log();
     console.log(`📅 Generated at: ${result.timestamp.toISOString()}`);
+
+    if (result.feedbackResult) {
+      console.log('🎯 Feedback sent to Coolhand:');
+      console.log(JSON.stringify(result.feedbackResult, null, 2));
+    } else {
+      console.log('⚠️  No feedback result available');
+    }
 
   } catch (error) {
     console.error('❌ Error generating email response:', error);
