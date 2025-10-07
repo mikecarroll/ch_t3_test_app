@@ -5,9 +5,11 @@ import { LatestPost } from "~/app/_components/post";
 import { api, HydrateClient } from "~/trpc/server";
 
 export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
+  // Temporarily comment out tRPC calls to fix app loading
+  // const hello = await api.post.hello({ text: "from tRPC" });
+  // void api.post.getLatest.prefetch();
 
-  void api.post.getLatest.prefetch();
+  const hello = { greeting: "Welcome to the T3 App!" };
 
   return (
     <HydrateClient>
@@ -48,6 +50,24 @@ export default async function Home() {
                 Generate AI-powered customer service email responses using LangChain and OpenAI.
               </div>
             </Link>
+            <Link
+              className="flex max-w-xs flex-col gap-4 rounded-xl bg-green-800/10 p-4 hover:bg-green-800/20 border border-green-500/20"
+              href="/ai-test"
+            >
+              <h3 className="text-2xl font-bold">🤖 AI Global Monitoring Test →</h3>
+              <div className="text-lg">
+                Test the new global monitoring feature - AI calls logged automatically without explicit Coolhand setup!
+              </div>
+            </Link>
+            <Link
+              className="flex max-w-xs flex-col gap-4 rounded-xl bg-purple-800/10 p-4 hover:bg-purple-800/20 border border-purple-500/20"
+              href="/poems"
+            >
+              <h3 className="text-2xl font-bold">🎭 AI Poem Generator →</h3>
+              <div className="text-lg">
+                Generate beautiful poems using Claude AI - demonstrating global monitoring in action!
+              </div>
+            </Link>
           </div>
           <div className="flex flex-col items-center gap-2">
             <p className="text-2xl text-white">
@@ -55,7 +75,7 @@ export default async function Home() {
             </p>
           </div>
 
-          <LatestPost />
+          {/* <LatestPost /> */}
         </div>
       </main>
     </HydrateClient>
