@@ -8,6 +8,9 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+// Force Node.js runtime instead of Edge runtime for coolhand-node compatibility
+export const runtime = 'nodejs';
+
 // Global flag to ensure we only initialize once
 let isGlobalMonitoringInitialized = false;
 
@@ -17,14 +20,8 @@ export function middleware(request: NextRequest) {
     try {
       // Dynamic import to avoid issues with server/client boundaries
       const initializeMonitoring = async () => {
-        // Temporarily commented out due to module resolution issues
-        // const { initializeGlobalMonitoring } = await import('coolhand-node');
-
-        /* initializeGlobalMonitoring({
-          apiKey: process.env.COOLHAND_API_KEY!,
-          environment: process.env.NODE_ENV === 'production' ? 'production' : 'local',
-          silent: process.env.NODE_ENV === 'production'
-        }); */
+        // Edge runtime detected - deferring full initialization to Node.js API routes
+        console.log('⚠️  Edge runtime in middleware - global monitoring will initialize in API routes');
 
         console.log('🌐 Coolhand global monitoring initialized via middleware');
       };
@@ -43,9 +40,7 @@ export function middleware(request: NextRequest) {
 // Configure which routes the middleware runs on
 export const config = {
   matcher: [
-    // Run on API routes
-    '/api/:path*',
-    // Run on tRPC routes
-    '/api/trpc/:path*'
+    // Run on ALL API routes (this covers both tRPC and pages API routes)
+    '/api/:path*'
   ]
 };

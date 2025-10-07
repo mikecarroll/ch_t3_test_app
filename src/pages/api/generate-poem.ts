@@ -1,17 +1,21 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PoemGenerationService } from '../../lib/poem-service';
 
-// Initialize global monitoring once for the entire app
+// Global monitoring initialization for Node.js runtime (middleware runs in Edge)
 let globalMonitoringInitialized = false;
 
 async function initializeGlobalMonitoring() {
   if (globalMonitoringInitialized) return;
 
   try {
-    console.log('🌐 Initializing Coolhand global monitoring for entire T3 app...');
-    await import('coolhand-node/auto-monitor');
+    console.log('🌐 Initializing Coolhand global monitoring in Node.js runtime...');
+    const { initializeGlobalMonitoring } = await import('coolhand-node/auto-monitor');
+    await initializeGlobalMonitoring({
+      apiKey: process.env.COOLHAND_API_KEY!,
+      silent: process.env.NODE_ENV === 'production'
+    });
     globalMonitoringInitialized = true;
-    console.log('✅ Global monitoring enabled for all AI API calls across the app!');
+    console.log('✅ Global monitoring enabled for all AI API calls!');
   } catch (error) {
     console.error('❌ Failed to initialize global monitoring:', error);
   }
@@ -21,7 +25,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // Initialize global monitoring on first API call
+  // Initialize global monitoring on first API call in Node.js runtime
   await initializeGlobalMonitoring();
 
   if (req.method !== 'POST') {
